@@ -1,31 +1,21 @@
 package hellojpa;
 
-import org.hibernate.annotations.common.reflection.XMember;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 @Entity
-public class Member  extends BaseEntity {
+public class Member extends BaseEntity {
   @Id
   @GeneratedValue
   private Long id;
   @Column(name = "USERNAME")
-  private String name;
+  private String username;
   // @Column(name = "TEAM_ID")
 // private Long teamId;
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "TEAM_ID")
   private Team team;
-
-  @OneToOne
-  @JoinColumn(name = "LOCKER_ID")
-  private Locker locker;
-
-  @OneToMany(mappedBy = "member")
-  private List<MemberProduct> memberProducts = new ArrayList<>();
 
   public Long getId() {
     return id;
@@ -35,12 +25,12 @@ public class Member  extends BaseEntity {
     this.id = id;
   }
 
-  public String getName() {
-    return name;
+  public String getUsername() {
+    return username;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public Team getTeam() {
@@ -49,11 +39,5 @@ public class Member  extends BaseEntity {
 
   public void setTeam(Team team) {
     this.team = team;
-  }
-
-  public void changeTeam(Team team) {
-    this.team = team;
-    team.getMembers().add(this);
-
   }
 }
