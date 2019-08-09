@@ -1,7 +1,10 @@
 package hellojpa;
 
+import com.sun.org.apache.xalan.internal.xsltc.dom.AdaptiveResultTreeImpl;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
   public static void main(String[] args) {
@@ -10,23 +13,29 @@ public class JpaMain {
     EntityTransaction transaction = em.getTransaction();
     transaction.begin();
     try {
-      Child child1 = new Child();
-      Child child2 = new Child();
-      Parent parent = new Parent();
-      parent.addChild(child1);
-      parent.addChild(child2);
-      em.persist(parent);
-      em.persist(child1);
-      em.persist(child2);
+      Member member = new Member();
+      member.setUsername("member1");
+      member.setHomeAddress(new Address("homeCity", "street", "10000"));
+      member.getFavoriteFoods().add("치킨");
+      member.getFavoriteFoods().add("족발");
+      member.getFavoriteFoods().add("피자");
+      member.getAddressHistory().add(new AddressEntity("old1", "street", "10000"));
+      member.getAddressHistory().add(new AddressEntity("old2", "street", "10000"));
+      em.persist(member);
       em.flush();
       em.clear();
+      System.out.println("==================Start===================");
+      Member findMember = em.find(Member.class, member.getId());
+//      Address a = findMember.getHomeAddress();
+//      findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+//      //치킨 -> 한식
+//      findMember.getFavoriteFoods().remove("치킨");
+//      findMember.getFavoriteFoods().add("한식");
 
-      Parent findParent = em.find(Parent.class, parent.getId());
-      em.remove(findParent);
-//      findParent.getChildList().remove(0);
+      findMember.getAddressHistory().remove(new AddressEntity("old1", "street", "10000"));
+      findMember.getAddressHistory().add(new AddressEntity("newCity1", "street", "10000"));
 
-//      em.persist(child1);
-//      em.persist(child2);
+
       transaction.commit();
     } catch (Exception e) {
       transaction.rollback();
